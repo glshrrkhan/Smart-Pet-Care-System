@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Smart Pet Care{% endblock %}
+
+{% block navbar %}
+<nav>
+  <a href="/" class="nav-brand">
+    <span class="logo">🐾</span>
+    <span class="name">Smart Pet Care</span>
+  </a>
+  <div class="nav-right">
+    <span class="chip">👤 {{ username }}</span>
+    <a href="/logout">🚪 Logout</a>
+  </div>
+</nav>
+{% endblock %}
+
+{% block head %}
+<style>
+.page-title{font-family:'Nunito',sans-serif;font-size:1.65rem;font-weight:900;color:var(--brown);margin-bottom:.3rem;}
+.page-sub{color:var(--muted);font-size:.9rem;margin-bottom:1.6rem;}
+
+/* STAT STRIP */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr;}}
+.stat{background:var(--white);border-radius:14px;padding:1.2rem 1.1rem;border:1.5px solid var(--border);box-shadow:var(--card-shadow);display:flex;align-items:center;gap:.9rem;transition:transform .18s;}
+.stat:hover{transform:translateY(-2px);}
+.stat-ico{font-size:2rem;width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ico-orange{background:#fff3e0;} .ico-teal{background:#e0f2f1;} .ico-yellow{background:#fff9c4;} .ico-green{background:#e8f5e9;}
+.stat-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
+.stat-val{font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:900;color:var(--brown);line-height:1.1;}
+
+/* FOOD BAR */
+.food-bar-wrap{margin-top:.6rem;}
+.food-bar-bg{background:#f0e8d8;border-radius:99px;height:10px;overflow:hidden;}
+.food-bar-fill{height:100%;border-radius:99px;transition:width .5s ease;background:linear-gradient(90deg,var(--teal),var(--teal2));}
+.food-bar-fill.warn{background:linear-gradient(90deg,#f5a623,#f7c65e);}
+.food-bar-fill.danger{background:linear-gradient(90deg,#e53935,#ff7043);}
+.food-bar-lbl{font-size:.75rem;color:var(--muted);margin-top:4px;font-weight:600;}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem;margin-bottom:1.3rem;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.3rem;margin-bottom:1.3rem;}
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+/* FEED NOW CARD */
+.feed-card{text-align:center;padding:1.8rem 1.4rem;}
+.pet-emoji{font-size:3.5rem;display:block;margin-bottom:.6rem;animation:bob 2.5s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.feed-card h2{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;color:var(--brown);margin-bottom:.3rem;}
+.feed-card p{color:var(--muted);font-size:.85rem;margin-bottom:1.2rem;}
+.feed-row{display:flex;align-items:center;justify-content:center;gap:.7rem;flex-wrap:wrap;}
+.portions-select{padding:9px 14px;border-radius:99px;border:1.5px solid var(--border);font-size:.88rem;font-weight:600;color:var(--brown);background:#fdf8f2;outline:none;cursor:pointer;}
+
+/* TEMP CARD */
+.temp-big{font-family:'Nunito',sans-serif;font-size:2.8rem;font-weight:900;text-align:center;margin:.4rem 0;}
+.temp-ok   {color:var(--teal);}
+.temp-high {color:#e53935;}
+.temp-low  {color:#1565c0;}
+.temp-unavail{color:var(--muted);font-size:1.4rem;}
+.temp-alert{text-align:center;font-size:.82rem;font-weight:600;padding:7px 14px;border-radius:8px;margin-top:.3rem;}
+.alert-ok  {background:#e0f2f1;color:var(--teal);}
+.alert-high{background:#ffebee;color:#c62828;}
+.alert-low {background:#e3f2fd;color:#1565c0;}
+.alert-unavail{background:#f5f0e8;color:var(--muted);}
+.hum-row{text-align:center;margin-top:.6rem;font-size:.85rem;color:var(--muted);font-weight:500;}
+
+/* PET PROFILE CARD */
+.pet-avatar{font-size:2.8rem;text-align:center;margin-bottom:.8rem;}
+.pet-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+
+/* SCHEDULE */
+.time-hint{font-size:.75rem;color:var(--muted);margin-top:5px;}
+.portions-row{display:flex;align-items:center;gap:1rem;margin-top:.8rem;}
+.portions-row label{margin:0;font-size:.8rem;font-weight:600;color:var(--brown2);white-space:nowrap;}
+
+/* CAMERA */
+.camera-wrap{width:100%;background:#1a1a1a;border-radius:12px;overflow:hidden;position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;}
+.camera-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.camera-offline{color:#9a7a5a;font-size:.9rem;font-weight:600;text-align:center;}
+.camera-dot{width:10px;height:10px;border-radius:50%;background:#e53935;display:inline-block;margin-right:6px;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <!-- Page header -->
+  <div class="page-title">🏠 Dashboard</div>
+  <div class="page-sub">Welcome back, <strong>{{ username }}</strong>! Here's your pet care overview.</div>
+
+  <!-- Stat strip -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-ico ico-orange">🍽️</div>
+      <div>
+        <div class="stat-lbl">Fed Today</div>
+        <div class="stat-val">{{ feedings_today }}</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-ico ico-teal">🌡️</div>
+      <div>
+        <div class="stat-lbl">Temperature</div>
+        <div class="stat-val">{% if current_temp %}{{ current_temp }}°C{% else %}—{% endif %}</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-ico ico-yellow">⏰</div>
+      <div>
+        <div class="stat-lbl">Scheduled</div>
+        <div class="stat-val">{{ feeding_times.split(',')|length }}</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-ico ico-green">🥣</div>
+      <div>
+        <div class="stat-lbl">Food Level</div>
+        <div class="stat-val">{{ food_level }}%</div>
+        <div class="food-bar-wrap">
+          <div class="food-bar-bg">
+            <div class="food-bar-fill {% if food_level < 20 %}danger{% elif food_level < 50 %}warn{% endif %}"
+                 style="width:{{ food_level }}%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 1: Feed Now + Temperature + Pet Profile -->
+  <div class="grid3">
+
+    <!-- Feed Now -->
+    <div class="card feed-card">
+      <span class="pet-emoji">
+        {% if pet.pet_type == 'Cat' %}🐱
+        {% elif pet.pet_type == 'Bird' %}🦜
+        {% elif pet.pet_type == 'Rabbit' %}🐰
+        {% else %}🐶{% endif %}
+      </span>
+      <h2>Feed {{ pet.pet_name or 'My Pet' }}</h2>
+      <p>Dispense food right now</p>
+      <form method="POST" action="/feed-now">
+        <div class="feed-row">
+          <select name="portions" class="portions-select">
+            {% for i in range(1,6) %}
+            <option value="{{ i }}" {% if i == portion_size|int %}selected{% endif %}>{{ i }} portion{% if i > 1 %}s{% endif %}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary">🍖 Feed Now</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Temperature -->
+    <div class="card" style="text-align:left;">
+      <div class="card-title">🌡️ Live Temperature</div>
+      {% if current_temp %}
+        <div class="temp-big temp-{{ temp_status }}">{{ current_temp }}°C</div>
+        <div class="temp-alert alert-{{ temp_status }}">
+          {% if temp_status == 'high' %}🔴 Temperature above 30°C — Please turn on the fan!
+          {% elif temp_status == 'low' %}🔵 Temperature below 20°C — Please turn on the heater!
+          {% else %}🟢 Comfortable temperature for your pet.{% endif %}
+        </div>
+        <div style="display:flex;gap:.6rem;margin-top:1rem;">
+          <button onclick="showDeviceMsg('fan-msg','🌀 Fan has been turned on!','#e53935',this)"
+            style="flex:1;padding:14px 8px;border:none;border-radius:14px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;letter-spacing:.3px;color:#fff;background:linear-gradient(135deg,#e53935,#ff7043);box-shadow:0 4px 18px rgba(229,57,53,.40);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;">
+            🌀 Turn On Fan
+          </button>
+          <button onclick="showDeviceMsg('heater-msg','🔥 Heater has been turned on!','#1565c0',this)"
+            style="flex:1;padding:14px 8px;border:none;border-radius:14px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;letter-spacing:.3px;color:#fff;background:linear-gradient(135deg,#1565c0,#42a5f5);box-shadow:0 4px 18px rgba(21,101,192,.40);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;">
+            🔥 Turn On Heater
+          </button>
+        </div>
+        <div id="fan-msg" style="display:none;margin-top:.5rem;padding:8px 14px;border-radius:10px;font-size:.85rem;font-weight:700;text-align:center;"></div>
+        <div id="heater-msg" style="display:none;margin-top:.4rem;padding:8px 14px;border-radius:10px;font-size:.85rem;font-weight:700;text-align:center;"></div>
+        <script>
+        function showDeviceMsg(msgId, msg, color, btn) {
+          btn.disabled = true;
+          btn.style.opacity = '0.7';
+          var el = document.getElementById(msgId);
+          el.textContent = '✅ ' + msg;
+          el.style.display = 'block';
+          el.style.background = color + '18';
+          el.style.color = color;
+          el.style.border = '1.5px solid ' + color + '44';
+        }
+        </script>
+        {% if current_hum %}
+        <div class="hum-row">💧 Humidity: <strong>{{ current_hum }}%</strong></div>
+        {% endif %}
+      {% else %}
+        <div class="temp-big temp-unavail">— °C</div>
+        <div class="temp-alert alert-unavail">Sensor unavailable (mock mode)</div>
+      {% endif %}
+    </div>
+
+    <!-- Pet Profile -->
+    <div class="card">
+      <div class="card-title">🐾 Pet Profile</div>
+      <form method="POST" action="/update-pet">
+        <div class="pet-avatar">
+          {% if pet.pet_type == 'Cat' %}🐱
+          {% elif pet.pet_type == 'Bird' %}🦜
+          {% elif pet.pet_type == 'Rabbit' %}🐰
+          {% else %}🐶{% endif %}
+        </div>
+        <div class="pet-info-grid">
+          <div class="form-group">
+            <label class="form-label">Pet Name</label>
+            <input class="form-control" name="pet_name" value="{{ pet.pet_name }}" placeholder="e.g. Bruno">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-control" name="pet_type">
+              {% for t in ['Dog','Cat','Bird','Rabbit','Other'] %}
+              <option value="{{ t }}" {% if pet.pet_type == t %}selected{% endif %}>{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Breed</label>
+            <input class="form-control" name="pet_breed" value="{{ pet.pet_breed }}" placeholder="e.g. Labrador">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input class="form-control" name="pet_age" value="{{ pet.pet_age }}" placeholder="e.g. 2 years">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-teal btn-sm" style="width:100%;justify-content:center;margin-top:.4rem;">💾 Save Profile</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Schedule + Food Refill -->
+  <div class="grid2">
+
+    <!-- Feeding Schedule -->
+    <div class="card">
+      <div class="card-title">⏰ Feeding Schedule</div>
+      <form method="POST" action="/update-schedule">
+        <div class="form-group">
+          <label class="form-label">Feeding Times</label>
+          <input class="form-control" name="feeding_times" value="{{ feeding_times }}" placeholder="08:00,13:00,18:00">
+          <p class="time-hint">⚠️ Use 24-hour HH:MM format, comma-separated</p>
+        </div>
+        <div class="portions-row">
+          <label class="form-label">Portions per feeding:</label>
+          <select class="form-control" name="portion_size" style="width:auto;min-width:80px;">
+            {% for i in range(1,6) %}
+            <option value="{{ i }}" {% if portion_size|int == i %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-teal" style="margin-top:1rem;">✅ Update Schedule</button>
+      </form>
+    </div>
+
+    <!-- Food Management -->
+    <div class="card">
+      <div class="card-title">🥣 Food Management</div>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem;">
+        Food is estimated based on feeding history. Each portion uses ~5% of capacity.
+      </p>
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;font-size:.82rem;font-weight:600;color:var(--brown2);margin-bottom:6px;">
+          <span>Food Level</span><span>{{ food_level }}%</span>
+        </div>
+        <div class="food-bar-bg" style="height:14px;">
+          <div class="food-bar-fill {% if food_level < 20 %}danger{% elif food_level < 50 %}warn{% endif %}"
+               style="width:{{ food_level }}%"></div>
+        </div>
+        {% if food_level < 20 %}
+        <p style="color:#e53935;font-size:.8rem;font-weight:600;margin-top:6px;">⚠️ Food running low! Please refill soon.</p>
+        {% elif food_level < 50 %}
+        <p style="color:#f5a623;font-size:.8rem;font-weight:600;margin-top:6px;">🟡 Food at medium level.</p>
+        {% else %}
+        <p style="color:var(--teal);font-size:.8rem;font-weight:600;margin-top:6px;">✅ Food level is good.</p>
+        {% endif %}
+      </div>
+      <form method="POST" action="/refill-food">
+        <button type="submit" class="btn btn-primary">🔄 Mark as Refilled (100%)</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Camera Live Feed -->
+  <div class="card" style="margin-bottom:1.3rem;">
+    <div class="card-title">
+      📷 Live Camera Feed
+      <span style="margin-left:auto;font-size:.75rem;font-weight:600;color:#e53935;">
+        <span class="camera-dot"></span>LIVE
+      </span>
+    </div>
+    <div class="camera-wrap">
+      <img src="/video-feed"
+           alt="Live pet camera"
+           onerror="this.style.display='none';document.getElementById('cam-offline').style.display='block';">
+      <div id="cam-offline" style="display:none;" class="camera-offline">
+        📷 Camera offline or not connected
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Logs -->
+  <div class="grid2">
+
+    <!-- Feeding Logs -->
+    <div class="card">
+      <div class="card-title">🍽️ Recent Feedings</div>
+      {% if feeding_logs %}
+      <table>
+        <thead><tr><th>Time</th><th>Type</th><th>Portions</th></tr></thead>
+        <tbody>
+          {% for log in feeding_logs %}
+          <tr>
+            <td>{{ log.timestamp }}</td>
+            <td><span class="badge {% if log.action_type=='manual' %}badge-orange{% else %}badge-teal{% endif %}">{{ log.action_type }}</span></td>
+            <td>{{ log.portion_size }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty"><span class="icon">🍽️</span>No feedings recorded yet</div>
+      {% endif %}
+    </div>
+
+    <!-- Temperature Logs -->
+    <div class="card">
+      <div class="card-title">🌡️ Temperature History</div>
+      {% if temperature_logs %}
+      <table>
+        <thead><tr><th>Time</th><th>Temp</th><th>Humidity</th></tr></thead>
+        <tbody>
+          {% for log in temperature_logs %}
+          <tr>
+            <td>{{ log.timestamp }}</td>
+            <td><span class="badge badge-teal">{{ log.temperature_value }}°C</span></td>
+            <td>{% if log.humidity_value %}{{ log.humidity_value }}%{% else %}—{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty"><span class="icon">🌡️</span>No temperature logs yet</div>
+      {% endif %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

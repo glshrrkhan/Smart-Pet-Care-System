@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Smart Pet Care{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8;--white:#fff;--orange:#e8742a;--orange2:#f09050;
+  --teal:#2a7a6f;--teal2:#3a9a8a;--brown:#4a3520;--brown2:#7a5a38;
+  --muted:#9a7a5a;--border:#e8d8c0;--yellow:#f5c842;--green:#4caf50;
+  --red:#e53935;--card-shadow:0 2px 16px rgba(74,53,32,.10);
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--brown);min-height:100vh;}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e8742a' fill-opacity='0.035'%3E%3Cellipse cx='38' cy='24' rx='7' ry='8'/%3E%3Cellipse cx='62' cy='24' rx='7' ry='8'/%3E%3Cellipse cx='22' cy='40' rx='6' ry='7'/%3E%3Cellipse cx='78' cy='40' rx='6' ry='7'/%3E%3Cellipse cx='50' cy='58' rx='14' ry='16'/%3E%3C/g%3E%3C/svg%3E");
+}
+.wrap{position:relative;z-index:1;}
+
+/* NAV */
+nav{background:linear-gradient(135deg,var(--teal),var(--teal2));height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;box-shadow:0 2px 12px rgba(42,122,111,.25);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;}
+.nav-brand .logo{font-size:1.8rem;}
+.nav-brand .name{font-family:'Nunito',sans-serif;font-size:1.25rem;font-weight:900;letter-spacing:-.2px;}
+.nav-right{display:flex;align-items:center;gap:.5rem;}
+.nav-right a,.nav-right span{color:#fff;font-size:.85rem;font-weight:600;padding:7px 14px;border-radius:99px;text-decoration:none;transition:background .15s;}
+.nav-right a:hover{background:rgba(255,255,255,.18);}
+.nav-right .chip{background:rgba(255,255,255,.18);}
+
+/* FLASH */
+.flashes{max-width:1100px;margin:1rem auto 0;padding:0 1.5rem;}
+.flash{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;font-size:.9rem;font-weight:600;margin-bottom:8px;animation:pop .25s ease;}
+@keyframes pop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.flash.success{background:#e8f5e9;color:#2e7d32;border-left:4px solid var(--green);}
+.flash.error  {background:#ffebee;color:#c62828;border-left:4px solid var(--red);}
+.flash.info   {background:#e3f2fd;color:#1565c0;border-left:4px solid #42a5f5;}
+
+/* CARD */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--card-shadow);border:1.5px solid var(--border);padding:1.6rem;}
+.card-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;color:var(--brown);margin-bottom:1rem;display:flex;align-items:center;gap:7px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:99px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;text-decoration:none;transition:all .18s;}
+.btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;box-shadow:0 3px 12px rgba(232,116,42,.30);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(232,116,42,.40);}
+.btn-teal{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 3px 12px rgba(42,122,111,.25);}
+.btn-teal:hover{transform:translateY(-2px);}
+.btn-outline{background:transparent;border:2px solid var(--orange);color:var(--orange);}
+.btn-outline:hover{background:var(--orange);color:#fff;}
+.btn-sm{padding:7px 16px;font-size:.82rem;}
+.btn-danger{background:#e53935;color:#fff;}
+.btn-danger:hover{background:#c62828;}
+
+/* FORM */
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:.82rem;font-weight:600;color:var(--brown2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+.form-control{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;color:var(--brown);background:#fdf8f2;outline:none;transition:border-color .18s,box-shadow .18s;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,122,111,.12);background:#fff;}
+select.form-control{cursor:pointer;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.875rem;}
+th{text-align:left;padding:9px 13px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border);}
+td{padding:11px 13px;border-bottom:1px solid #f5ede0;color:var(--brown);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fdf8f2;}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.75rem;font-weight:700;}
+.badge-orange{background:#fff3e0;color:var(--orange);}
+.badge-teal  {background:#e0f2f1;color:var(--teal);}
+.badge-green {background:#e8f5e9;color:#388e3c;}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:2rem;color:var(--muted);font-size:.9rem;font-weight:500;}
+.empty .icon{font-size:2.2rem;display:block;margin-bottom:.5rem;opacity:.35;}
+
+/* PAGE */
+.page{max-width:1100px;margin:1.8rem auto;padding:0 1.5rem 3rem;}
+footer{text-align:center;padding:1.2rem;font-size:.82rem;color:var(--muted);font-weight:500;border-top:1.5px solid var(--border);margin-top:2rem;}
+footer b{color:var(--orange);}
+</style>
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="wrap">
+{% block navbar %}{% endblock %}
+
+{% with messages=get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flashes">
+{% for cat,msg in messages %}
+<div class="flash {{cat}}">
+  {% if cat=='success' %}✅{% elif cat=='error' %}❌{% else %}ℹ️{% endif %} {{msg}}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>🐾 <b>Smart Pet Care</b> — Keeping your pets happy, healthy &amp; fed</footer>
+</div>
+</body>
+</html>

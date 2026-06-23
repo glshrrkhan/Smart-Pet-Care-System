@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — Smart Pet Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#f5f0e8;--parchment:#ece5d8;--bark:#5c4a32;--bark2:#8c7355;
+  --forest:#2a5a4a;--forest2:#3a7a6a;
+  --error:#8b2e2e;--errbg:#fdf0f0;--successbg:#e8f5e9;--successc:#2e7d32;
+  --text:#1e1e1e;--muted:#6b6152;--border:rgba(92,74,50,.18);
+  --shadow:0 8px 40px rgba(42,90,74,.12),0 2px 8px rgba(0,0,0,.06);
+}
+html,body{height:100%;}
+body{font-family:'DM Sans',sans-serif;background:var(--forest);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;position:relative;}
+body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg,rgba(20,48,38,.75) 0%,rgba(42,90,74,.62) 100%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.03'%3E%3Cellipse cx='45' cy='28' rx='8' ry='10'/%3E%3Cellipse cx='75' cy='28' rx='8' ry='10'/%3E%3Cellipse cx='26' cy='48' rx='7' ry='9'/%3E%3Cellipse cx='94' cy='48' rx='7' ry='9'/%3E%3Cellipse cx='60' cy='72' rx='17' ry='20'/%3E%3C/g%3E%3C/svg%3E");}
+.card{position:relative;z-index:1;width:100%;max-width:420px;background:var(--cream);border-radius:22px;box-shadow:var(--shadow),0 0 0 1px var(--border);overflow:hidden;animation:up .5s cubic-bezier(.22,1,.36,1) both;}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.card-head{background:linear-gradient(135deg,var(--forest),var(--forest2));padding:28px 36px 24px;text-align:center;}
+.logo-ring{display:inline-flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.13);margin-bottom:10px;font-size:1.6rem;}
+.brand-name{font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:900;color:#e8f4ed;}
+.brand-sub{margin-top:4px;font-size:.78rem;color:rgba(200,230,215,.65);font-weight:300;}
+.card-body{padding:26px 36px 16px;}
+.flash-err{background:var(--errbg);border:1px solid rgba(139,46,46,.2);border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:.85rem;color:var(--error);}
+.flash-ok {background:var(--successbg);border:1px solid rgba(46,125,50,.2);border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:.85rem;color:var(--successc);}
+.field{margin-bottom:16px;}
+label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--bark);margin-bottom:6px;}
+.iw{position:relative;}
+.iw svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--bark2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+input[type=text],input[type=password]{width:100%;padding:11px 13px 11px 40px;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--text);background:#fff;border:1.5px solid var(--parchment);border-radius:10px;outline:none;transition:border-color .16s,box-shadow .16s;}
+input:focus{border-color:var(--forest2);box-shadow:0 0 0 3px rgba(58,122,106,.12);}
+.hint{font-size:.75rem;color:var(--muted);margin-top:4px;}
+.btn-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;margin-top:18px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;color:#fff;background:var(--forest);border:none;border-radius:11px;cursor:pointer;transition:background .16s,transform .1s;}
+.btn-submit:hover{background:var(--forest2);}
+.btn-submit:active{transform:scale(.98);}
+.card-foot{text-align:center;padding:14px 36px 22px;border-top:1px solid var(--parchment);}
+.card-foot p{font-size:.82rem;color:var(--muted);}
+.card-foot a{color:var(--forest2);font-weight:600;text-decoration:none;}
+.card-foot a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-head">
+    <div class="logo-ring">🐶</div>
+    <div class="brand-name">Create Account</div>
+    <div class="brand-sub">Join Smart Pet Care today</div>
+  </div>
+
+  <div class="card-body">
+    {% with messages=get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat,msg in messages %}
+      <div class="flash-{% if cat=='success' %}ok{% else %}err{% endif %}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/signup" novalidate>
+      <div class="field">
+        <label>Username</label>
+        <div class="iw">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
+          <input type="text" name="username" placeholder="Choose a username" required>
+        </div>
+        <p class="hint">At least 3 characters</p>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="iw">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input type="password" name="password" placeholder="At least 6 characters" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <div class="iw">
+          <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+          <input type="password" name="confirm_password" placeholder="Repeat your password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Create Account</button>
+    </form>
+  </div>
+
+  <div class="card-foot">
+    <p>Already have an account? <a href="/login">Sign in →</a></p>
+  </div>
+</div>
+</body>
+</html>
