@@ -133,16 +133,7 @@ Key settings live in `config.py`:
 
 ---
 
-## 📸 Screenshots
-
-> _Add screenshots of your login page and dashboard here to make the project stand out._
->
-> ```markdown
-> ![Dashboard](Uploading image.png…)
-> ![Login](Uploading image.png…)
-> ```
-
----
+ 
 
 ## 🔮 Future Improvements
 
