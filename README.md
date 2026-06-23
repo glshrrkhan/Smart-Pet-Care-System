@@ -1,4 +1,4 @@
-<img width="1843" height="961" alt="image" src="https://github.com/user-attachments/assets/b2ee083d-5d08-4a2e-ae3a-dec464bbd80b" /><img width="1843" height="961" alt="image" src="https://github.com/user-attachments/assets/511c9d56-a2df-47ca-a793-46e05580cf00" /><img width="1843" height="961" alt="image" src="https://github.com/user-attachments/assets/4cc1caa6-d5c6-44ae-8d9d-35791e8b460b" /><img width="1843" height="961" alt="image" src="https://github.com/user-attachments/assets/d6adc33e-638f-4e3b-9936-a5e46f2ded5e" /><h1 align="center">🐾 Smart Pet Care</h1>
+<h1 align="center">🐾 Smart Pet Care</h1>
 
 <p align="center">
 An IoT-based automated pet feeding and environment monitoring system built with Flask and Raspberry Pi.
@@ -6,7 +6,9 @@ An IoT-based automated pet feeding and environment monitoring system built with 
 
 <p align="center">
 <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
-<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" /> 
+<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" />
+<img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" />
+<img src="https://img.shields.io/badge/Raspberry_Pi-A22846?style=for-the-badge&logo=raspberry-pi&logoColor=white" />
 </p>
 
 ---
@@ -129,9 +131,9 @@ Key settings live in `config.py`:
 
 > ⚠️ **Security note:** Before any real deployment, change `FLASK_SECRET_KEY` in `config.py` to a strong, unique value.
 
----
-
  
+
+---
 
 ## 🔮 Future Improvements
 
